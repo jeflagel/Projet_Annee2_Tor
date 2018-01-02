@@ -1,0 +1,3 @@
+---
+  -tasks:
+  -apt: apache2 update_cache=yes

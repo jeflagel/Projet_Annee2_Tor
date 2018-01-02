@@ -37,3 +37,35 @@
       Permet de créer une machine virtuelle avec tous les paramètres souhaités de manière très rapide. Ainsi notre environnement de travail est très rapidement disponible.Possibilité de récupérer les boxs sur internet facilement en choisissant sa distribution (nous avons choisi debian 7.2).
       On tape la commande :  vagrant init NomMachine LienBox
       Cela entraine la création d'un fichier vagrantfile
+
+
+
+
+## 3) Administration web
+### 1) Heberger un hidden service
+          * Télécharger Tor
+           sudo apt install tor
+          * Configurer TOR
+            Dans le fichier etc/tor/torrc : Décommenter ces lignes :
+            DataDirectory /var/lib/tor
+            HiddenServiceDir /var/lib/tor/hidden_service/
+            HiddenServicePort 80 127.0.0.1:80
+
+            Recharger TOR : sudo service tor reload
+
+          * Changer les clefs données par defaut
+          Dans /var/lib/tor/hidden_service, modifier les fichiers hostname et private_key.
+          Obtention de ces clefs avec scallions : https://github.com/lachesis/scallion/raw/binaries/scallion-v2.0.zip
+
+
+          * Telecharger apache
+            sudo apt install apache2
+
+          * Configurer apache
+              Dans le fichier ports.conf (ect/apache2):
+              Remplacer la ligne listen 80 par listen 127.0.0.1:80
+              Dans sites-enabled, Remplacer <VirtualHost \*:80> par <VirtualHost 127.0.0.1:80>
+              ainsi que Servername.
+
+### 2) Devenir un relais tor de sortie
+           https://themimitoof.fr/mettre-en-place-un-relais-tor/
