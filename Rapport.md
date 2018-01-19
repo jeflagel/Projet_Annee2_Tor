@@ -8,9 +8,14 @@
 
 ### b) Comment TOR garde l'anonymat?
     L'objectif de TOR est que l'utilisateur puisse utiliser internet tout en restant totalement anonyme. Pour cela, il faut que personne ne soit capable de retrouver la source de la demande ou la destination de l'information.
-    Lorsque nous nous connectons à un site web, notre ordinateur essaie de se connecter directement à son serveur par la route la plus courte. Ce qui prime est la rapidité et l'efficacité. Notre adresse IP est donc ressencée comme point de départ de la communication et il n'y a aucun anonymat. Pour éviter cela, TOR rompt celle ligne entre notre ordinateur et ce serveur distant. TOR utilise l'Onion Routing qui est une technique de communication anonyme sur un réseau. Les messages sont chiffrés en continu en passant de noeuds en noeuds. Ces noeuds sont aussi appelés routeurs Onions. Le terme onion se réfère aux différentes couches de chiffrement effectuées par des relais anonymes qui protègent les messages. Le routage devient alors totalement invisible.
+    Lorsque nous nous connectons à un site web, notre ordinateur essaie de se connecter directement à son serveur par la route la plus courte. Ce qui prime est la rapidité et l'efficacité. Notre adresse IP est donc ressencée comme point de départ de la communication et il n'y a aucun anonymat.
+    ![Connexion à internet classique SANS HTTPS](https://framablog.org/wp-content/uploads/2016/05/tor-and-https-0-768x593.png).
+    Toute personne ayant accès à la requête connait l'emetteur, le destinataire et les données.
+
+     Pour éviter cela, TOR rompt celle ligne entre notre ordinateur et ce serveur distant. TOR utilise l'Onion Routing qui est une technique de communication anonyme sur un réseau. Les messages sont chiffrés en continu en passant de noeuds en noeuds. Ces noeuds sont aussi appelés routeurs Onions. Le terme onion se réfère aux différentes couches de chiffrement effectuées par des relais anonymes qui protègent les messages. Le routage devient alors totalement invisible.
     Si une personne A envoie une requête au serveur B, la requête va passer par plusieurs noeuds. Cette requête va d'abbord être chiffrer avec le clé publique du noeuds de sortie puis re-chiffrer par la clé publique de l'avant dernier noeud et ainsi de suite jusqu'au premier noeud auquel elle va être envoyé. Ce principe permet que le premier noeud connaisse seulement l'expéditeur mais pas la destination, les noeuds intermédiaires ne connaissent que le noeuds précédent et le suivant et le noeud de sortie ne connait que le destinataire.
     Tor utilise ce même chemin pendant plusieurs minutes puis le change pour qu'aucun lien ne puisse être établi.
+    ![Connexion à internet classique avec TOR et HTTPS](https://framablog.org/wp-content/uploads/2016/05/tor-and-https-3-768x593.png).
 
 
 ### c) Quels sont les failles de TOR?
@@ -166,3 +171,21 @@ Il est donc vivement conseiller de désactiver le JavaScript si l'on veut utilis
 Si l'on contrôle un noeud de sortie ou que l'on est l'homme du milieu entre un site web publique et un noeud de sortie TOR, nous avons accès au traffic en clair. Dans les requêtes, il peut se trouver des informations sensibles tel que des identifiants, mots de passe ou informations personnelles qui permettraient de vous lier à cette requête. Cela ne fonctionne pas pour les services cachés car les données sont chiffrés de bout en bout.
 
 #### c)
+
+
+
+
+
+
+
+
+reference :
+[1]https://www.psychoactif.org/psychowiki/index.php?title=Tor,_conception,_fonctionnement_et_limites
+[2]https://fr.softonic.com/articles/tor-outil-navigation-anonyme
+[3]http://www.robgjansen.com/publications/middlefp-s&p2017.pdf
+[4]https://www.torproject.org/docs/tor-doc-relay.html.en#setup
+[5]https://themimitoof.fr/mettre-en-place-un-relais-tor/
+[6]http://www.supinfo.com/articles/single/277-creer-hidden-service-reseau-tor
+[7]http://www.ieee-security.org/TC/SP2013/papers/4977a080.pdf
+[8]https://donncha.is/2013/05/trawling-tor-hidden-services/
+[9]https://framablog.org/2016/05/06/anonymat-en-ligne-nos-oignons/
