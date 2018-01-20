@@ -12,7 +12,7 @@
 ### b) Comment TOR garde l'anonymat?
     L'objectif de TOR est que l'utilisateur puisse utiliser internet tout en restant totalement anonyme. Pour cela, il faut que personne ne soit capable de retrouver la source de la demande ou la destination de l'information.
     Lorsque nous nous connectons à un site web, notre ordinateur essaie de se connecter directement à son serveur par la route la plus courte. Ce qui prime est la rapidité et l'efficacité. Notre adresse IP est donc ressencée comme point de départ de la communication et il n'y a aucun anonymat.
-![Connexion à internet classique SANS HTTPS](images/Connexion_classique.png, "Connexion à internet classique SANS HTTPS").
+![Connexion à internet classique SANS HTTPS](images/Connexion_classique.png "Connexion à internet classique SANS HTTPS").
     Toute personne ayant accès à la requête connait l'emetteur, le destinataire et les données.
 
      Pour éviter cela, TOR rompt celle ligne entre notre ordinateur et ce serveur distant. TOR utilise l'Onion Routing qui est une technique de communication anonyme sur un réseau. Les messages sont chiffrés en continu en passant de noeuds en noeuds. Ces noeuds sont aussi appelés routeurs Onions. Le terme onion se réfère aux différentes couches de chiffrement effectuées par des relais anonymes qui protègent les messages. Le routage devient alors totalement invisible.
@@ -134,12 +134,12 @@ Maintenant Alice veut se connecter à mon service caché : wslgdkhq.Onion
 
 #### a) HSDIR
     Le service caché necéssite d'établir des circuits vers des points d'introduction. Ces points d'introduction vont permettre au client de pouvoir se connecter au service. Ce dernier effectue établie donc plusieurs circuits de trois noeuds et demande aux relais de sortie de servir de points d'introduction. Il récupère ainsi leur IP.
+    [Voir annexe 1]
 
-![Établissement des circuits](images/Etablissement_circuit.png "Établissement des circuits")
 
     Ensuite, le service ne peut pas être répertorié dans le DNS s'il veut garder son anonymat. Cependant il doit signaler sa présence pour permettre au client de se connecter. Pour cela il demande aux points d'introduction de maintenir la connexion et pendant ce temp il établit un autre circuit vers un Hidden Service Directory(HSDir). Il fournit alors au HSDir son descripteur composé des IP des points d'introduction, de la clé publique du service caché ainsi que de la signature des deux éléments précédant faite avec la clé privée correspondante. (6 HSDir seront en possession de ce descripteur).
+    [Voir annexe 2]
 
-![Signalement de son exitence au HSDir](images/Signalement_HSDir.png "Signalement de son exitence au HSDir")
 
     Le descripteur est calculé comme ceci : descriptor-id = H(permanent-id | H(time-period | descriptor-cookie | replica))
     Fonction de hashage sha1 en 2013. Est-ce que c'est passé à sha256?
@@ -153,17 +153,17 @@ Maintenant Alice veut se connecter à mon service caché : wslgdkhq.Onion
 
 #### b) Etablissement de la connexion
       La machine d'Alice a téléchargé les consensus et elle possède donc les IP des HSDir. Elle peut donc, toujours en utilisant le TOR, télécharger le descripteur du service caché et vérifier la signature. La machine d'Alice connait donc maintenant les IP d'introduction de mon service caché.
-![Téléchargement du descripteur](images/Telechargement_Descripteur.png "Téléchargement du descripteur")
+      [Voir annexe 3]
 
 
       Comme pour se connecter à un service publique, la machine d'Alice va choisir créér aléatoirement un circuit avec trois noeuds TOR. Le noeud de sortie sera le point de rendez-vous. La machine founira sous forme de cookie un secret à ce point de rendez-vous. Ce dernier permettra d'authentifier le service caché.
-![Connexion au point de rendez-vous](images/Connexion_RDV.png "Connexion au point de rendez-vous")
+      [Voir annexe 4]
 
       Le machine d'Alice garde en attente ce cette connexion. Par ailleurs, elle crée un nouveau circuit de façon à ce que le noeud de sortie communique avec un point d'introduction du service caché. Elle peut ensuite communiquer à ce service : l'IP du point de rendez-vous, le secret qui a été dit à ce point de rendez-vous et la première partie de l'échange de Diffie-Hellman pour la création d'une clé symétrique entre la machine d'Alice et le service caché. Toutes ces informations sont chiffrées avec la clé publique du service caché.
-![Communication du point de rendez-vous au service caché](images/Com_du_RDV_au_HS.png "Communication du point de rendez-vous au service caché")
+      [Voir annexe 5]
 
       Le service caché contacte ensuite le point de rendez-vous pour s'authentifier puis en passant par ce noeud communique avec le client pour terminer l'échange de la clé symétrique de Diffie-Hellman. Maintenant, Alice et le service caché peuvent communiquer de façon sécurisé. Il n'y a pas trois noeuds Tor sur leur circuit mais 6. Les trois premiers enlèves chacun une couche de chiffrement et les trois derniers en remettent chacun une. La connexion est chiffrée du client au service caché.
-![Etablissement de la deuxième partie de la clé symétrique](images/Echange_cle_HS.png "Etablissement de la deuxième partie de la clé symétrique")
+      [Voir annexe 6]
 
 ### 6) Les Vulnérabilités de Tor
 #### a) Vulnérabilité exploitant le JavaScript
@@ -200,7 +200,18 @@ réf : [1]
 
 
 
-
+Annexe 1 :
+![Établissement des circuits](images/Etablissement_circuit.png "Établissement des circuits")
+Annexe 2 :
+![Signalement de son exitence au HSDir](images/Signalement_HSDir.png "Signalement de son exitence au HSDir")
+Annexe 3 :
+![Téléchargement du descripteur](images/Telechargement_Descripteur.png "Téléchargement du descripteur")
+Annexe 4 :
+![Connexion au point de rendez-vous](images/Connexion_RDV.png "Connexion au point de rendez-vous")
+Annexe 5 :
+![Communication du point de rendez-vous au service caché](images/Com_du_RDV_au_HS.png "Communication du point de rendez-vous au service caché")
+Annexe 6 :
+![Etablissement de la deuxième partie de la clé symétrique](images/Echange_cle_HS.png "Etablissement de la deuxième partie de la clé symétrique")
 
 
 
@@ -209,13 +220,13 @@ réf : [1]
 
 
 reference :
-[1] : https://www.psychoactif.org/psychowiki/index.php?title=Tor,_conception,_fonctionnement_et_limites
-[2] : https://fr.softonic.com/articles/tor-outil-navigation-anonyme
-[3] : https://www.torproject.org/docs/onion-services
-[4] : https://www.torproject.org/docs/tor-doc-relay.html.en#setup
-[5] : https://themimitoof.fr/mettre-en-place-un-relais-tor/
-[6] : http://www.supinfo.com/articles/single/277-creer-hidden-service-reseau-tor
-[7] :http://www.ieee-security.org/TC/SP2013/papers/4977a080.pdf
-[8] :https://donncha.is/2013/05/trawling-tor-hidden-services/
-[9] :https://framablog.org/2016/05/06/anonymat-en-ligne-nos-oignons/
-[10] : https://blog.torproject.org/lifecycle-new-relay
+<br/>[1] : https://www.psychoactif.org/psychowiki/index.php?title=Tor,_conception,_fonctionnement_et_limites 
+<br/>[2] : https://fr.softonic.com/articles/tor-outil-navigation-anonyme
+<br/>[3] : https://www.torproject.org/docs/onion-services
+<br/>[4] : https://www.torproject.org/docs/tor-doc-relay.html.en#setup
+<br/>[5] : https://themimitoof.fr/mettre-en-place-un-relais-tor/
+<br/>[6] : http://www.supinfo.com/articles/single/277-creer-hidden-service-reseau-tor
+<br/>[7] :http://www.ieee-security.org/TC/SP2013/papers/4977a080.pdf
+<br/>[8] :https://donncha.is/2013/05/trawling-tor-hidden-services/
+<br/>[9] :https://framablog.org/2016/05/06/anonymat-en-ligne-nos-oignons/
+<br/>[10] : https://blog.torproject.org/lifecycle-new-relay
