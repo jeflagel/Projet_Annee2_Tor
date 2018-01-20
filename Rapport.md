@@ -12,14 +12,14 @@
 ### b) Comment TOR garde l'anonymat?
     L'objectif de TOR est que l'utilisateur puisse utiliser internet tout en restant totalement anonyme. Pour cela, il faut que personne ne soit capable de retrouver la source de la demande ou la destination de l'information.
     Lorsque nous nous connectons à un site web, notre ordinateur essaie de se connecter directement à son serveur par la route la plus courte. Ce qui prime est la rapidité et l'efficacité. Notre adresse IP est donc ressencée comme point de départ de la communication et il n'y a aucun anonymat.
-![Connexion à internet classique SANS HTTPS](https://framablog.org/wp-content/uploads/2016/05/tor-and-https-0-768x593.png "Connexion à internet classique SANS HTTPS").
+![Connexion à internet classique SANS HTTPS](/images/Connexion_classique.png, "Connexion à internet classique SANS HTTPS").
     Toute personne ayant accès à la requête connait l'emetteur, le destinataire et les données.
 
      Pour éviter cela, TOR rompt celle ligne entre notre ordinateur et ce serveur distant. TOR utilise l'Onion Routing qui est une technique de communication anonyme sur un réseau. Les messages sont chiffrés en continu en passant de noeuds en noeuds. Ces noeuds sont aussi appelés routeurs Onions. Le terme onion se réfère aux différentes couches de chiffrement effectuées par des relais anonymes qui protègent les messages. Le routage devient alors totalement invisible.
 
     Si une personne A envoie une requête au serveur B, la requête va passer par plusieurs noeuds. Cette requête va d'abbord être chiffrer avec le clé publique du noeuds de sortie puis re-chiffrer par la clé publique de l'avant dernier noeud et ainsi de suite jusqu'au premier noeud auquel elle va être envoyé. Ce principe permet que le premier noeud connaisse seulement l'expéditeur mais pas la destination, les noeuds intermédiaires ne connaissent que le noeuds précédent et le suivant et le noeud de sortie ne connait que le destinataire.
     Tor utilise ce même chemin pendant plusieurs minutes puis le change pour qu'aucun lien ne puisse être établi.
-![Connexion à internet classique avec TOR et HTTPS](https://framablog.org/wp-content/uploads/2016/05/tor-and-https-3-768x593.png "Connexion à internet classique avec TOR et HTTPS").
+![Connexion à internet classique avec TOR et HTTPS](/images/connexion_tor.png "Connexion à internet classique avec TOR et HTTPS").
 
 
 
@@ -135,35 +135,35 @@ Maintenant Alice veut se connecter à mon service caché : wslgdkhq.Onion
 #### a) HSDIR
     Le service caché necéssite d'établir des circuits vers des points d'introduction. Ces points d'introduction vont permettre au client de pouvoir se connecter au service. Ce dernier effectue établie donc plusieurs circuits de trois noeuds et demande aux relais de sortie de servir de points d'introduction. Il récupère ainsi leur IP.
 
-![Établissement des circuits](https://www.psychoactif.org/psychowiki/images/8/87/Step1.png "Établissement des circuits")
+![Établissement des circuits](/images/Etablissement_circuit.png "Établissement des circuits")
 
     Ensuite, le service ne peut pas être répertorié dans le DNS s'il veut garder son anonymat. Cependant il doit signaler sa présence pour permettre au client de se connecter. Pour cela il demande aux points d'introduction de maintenir la connexion et pendant ce temp il établit un autre circuit vers un Hidden Service Directory(HSDir). Il fournit alors au HSDir son descripteur composé des IP des points d'introduction, de la clé publique du service caché ainsi que de la signature des deux éléments précédant faite avec la clé privée correspondante. (6 HSDir seront en possession de ce descripteur).
 
-![Signalement de son exitence au HSDir](https://www.psychoactif.org/psychowiki/images/9/9f/Step2.png "Signalement de son exitence au HSDir")
+![Signalement de son exitence au HSDir](/images/Signalement_HSDir.png "Signalement de son exitence au HSDir")
 
     Le descripteur est calculé comme ceci : descriptor-id = H(permanent-id | H(time-period | descriptor-cookie | replica))
     Fonction de hashage sha1 en 2013. Est-ce que c'est passé à sha256?
     replica : 0 ou 1
     time-period : (current-time + permanent-id-byte * 86400 / 256) / 86400
     permanent-id : c'est un dérivé de la clé publique du service caché.
-![Table de descripteurs des HSDir](HSDir.png "Table de descripteurs des HSDir")[8]
+![Table de descripteurs des HSDir](/images/HSDir.png "Table de descripteurs des HSDir")[8]
 
 
     Un HSDir est un noeud Tor comme les autres mais il rempli une fonctionnalité supplémentaire : il reçoit les informations sur les services cachés pour signaler leur existence et permettre aux clients de les contacter. Le concensus permet à un noeud de devenir HSDir.
 
 #### b) Etablissement de la connexion
       La machine d'Alice a téléchargé les consensus et elle possède donc les IP des HSDir. Elle peut donc, toujours en utilisant le TOR, télécharger le descripteur du service caché et vérifier la signature. La machine d'Alice connait donc maintenant les IP d'introduction de mon service caché.
-![Téléchargement du descripteur](https://www.psychoactif.org/psychowiki/images/0/08/Step3.png "Téléchargement du descripteur")
+![Téléchargement du descripteur](images/Telechargement_Descripteur.png "Téléchargement du descripteur")
 
 
       Comme pour se connecter à un service publique, la machine d'Alice va choisir créér aléatoirement un circuit avec trois noeuds TOR. Le noeud de sortie sera le point de rendez-vous. La machine founira sous forme de cookie un secret à ce point de rendez-vous. Ce dernier permettra d'authentifier le service caché.
-![Connexion au point de rendez-vous](https://www.psychoactif.org/psychowiki/images/a/ad/Step4.png "Connexion au point de rendez-vous")
+![Connexion au point de rendez-vous](images/Connexion_RDV.png "Connexion au point de rendez-vous")
 
       Le machine d'Alice garde en attente ce cette connexion. Par ailleurs, elle crée un nouveau circuit de façon à ce que le noeud de sortie communique avec un point d'introduction du service caché. Elle peut ensuite communiquer à ce service : l'IP du point de rendez-vous, le secret qui a été dit à ce point de rendez-vous et la première partie de l'échange de Diffie-Hellman pour la création d'une clé symétrique entre la machine d'Alice et le service caché. Toutes ces informations sont chiffrées avec la clé publique du service caché.
-![Communication du point de rendez-vous au service caché](https://www.psychoactif.org/psychowiki/images/4/4f/Step5.png "Communication du point de rendez-vous au service caché")
+![Communication du point de rendez-vous au service caché](images/Com_du_RDV_au_HS.png "Communication du point de rendez-vous au service caché")
 
       Le service caché contacte ensuite le point de rendez-vous pour s'authentifier puis en passant par ce noeud communique avec le client pour terminer l'échange de la clé symétrique de Diffie-Hellman. Maintenant, Alice et le service caché peuvent communiquer de façon sécurisé. Il n'y a pas trois noeuds Tor sur leur circuit mais 6. Les trois premiers enlèves chacun une couche de chiffrement et les trois derniers en remettent chacun une. La connexion est chiffrée du client au service caché.
-![Etablissement de la deuxième partie de la clé symétrique](https://www.psychoactif.org/psychowiki/images/f/f2/Step7.png "Etablissement de la deuxième partie de la clé symétrique")
+![Etablissement de la deuxième partie de la clé symétrique](images/Echange_cle_HS.png "Etablissement de la deuxième partie de la clé symétrique")
 
 ### 6) Les Vulnérabilités de Tor
 #### a) Vulnérabilité exploitant le JavaScript
