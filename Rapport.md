@@ -11,15 +11,15 @@
 
 ### b) Comment TOR garde l'anonymat?
     L'objectif de TOR est que l'utilisateur puisse utiliser internet tout en restant totalement anonyme. Pour cela, il faut que personne ne soit capable de retrouver la source de la demande ou la destination de l'information.
-    Lorsque nous nous connectons à un site web, notre ordinateur essaie de se connecter directement à son serveur par la route la plus courte. Ce qui prime est la rapidité et l'efficacité. Notre adresse IP est donc ressencée comme point de départ de la communication et il n'y a aucun anonymat.
-![Connexion à internet classique SANS HTTPS](images/Connexion_classique.png "Connexion à internet classique SANS HTTPS").
+    Lorsque nous nous connectons à un site web, notre ordinateur essaie de se connecter directement à son serveur par la route la plus courte. Ce qui prime est la rapidité et l'efficacité. Notre adresse IP est donc recensée comme point de départ de la communication et il n'y a aucun anonymat.
+![Connexion à internet classique SANS HTTPS](images/Connexion_classique.png "Connexion à internet classique SANS HTTPS")
     Toute personne ayant accès à la requête connait l'emetteur, le destinataire et les données.
 
      Pour éviter cela, TOR rompt celle ligne entre notre ordinateur et ce serveur distant. TOR utilise l'Onion Routing qui est une technique de communication anonyme sur un réseau. Les messages sont chiffrés en continu en passant de noeuds en noeuds. Ces noeuds sont aussi appelés routeurs Onions. Le terme onion se réfère aux différentes couches de chiffrement effectuées par des relais anonymes qui protègent les messages. Le routage devient alors totalement invisible.
 
     Si une personne A envoie une requête au serveur B, la requête va passer par plusieurs noeuds. Cette requête va d'abbord être chiffrer avec le clé publique du noeuds de sortie puis re-chiffrer par la clé publique de l'avant dernier noeud et ainsi de suite jusqu'au premier noeud auquel elle va être envoyé. Ce principe permet que le premier noeud connaisse seulement l'expéditeur mais pas la destination, les noeuds intermédiaires ne connaissent que le noeuds précédent et le suivant et le noeud de sortie ne connait que le destinataire.
     Tor utilise ce même chemin pendant plusieurs minutes puis le change pour qu'aucun lien ne puisse être établi.
-![Connexion à internet classique avec TOR et HTTPS](images/connexion_tor.png "Connexion à internet classique avec TOR et HTTPS").
+![Connexion à internet classique avec TOR et HTTPS](images/connexion_tor.png "Connexion à internet classique avec TOR et HTTPS")
 
 
 
@@ -220,7 +220,7 @@ Annexe 6 :
 
 
 reference :
-<br/>[1] : https://www.psychoactif.org/psychowiki/index.php?title=Tor,_conception,_fonctionnement_et_limites 
+<br/>[1] : https://www.psychoactif.org/psychowiki/index.php?title=Tor,_conception,_fonctionnement_et_limites
 <br/>[2] : https://fr.softonic.com/articles/tor-outil-navigation-anonyme
 <br/>[3] : https://www.torproject.org/docs/onion-services
 <br/>[4] : https://www.torproject.org/docs/tor-doc-relay.html.en#setup
