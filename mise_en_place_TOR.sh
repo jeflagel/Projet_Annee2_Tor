@@ -2,7 +2,7 @@
 ssh -i/Users/Laurine/.ssh/tor.isima.fr ubuntu@193.55.95.207
 cd ../..
 sudo su
-sudo apt install tor
+sudo apt install -y tor
 Y
 cd etc/tor
 sed -i -e "s/#DataDirectory \/var\/lib\/tor/DataDirectory \/var\/lib\/tor/g" torrc
