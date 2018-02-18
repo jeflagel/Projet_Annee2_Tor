@@ -90,7 +90,36 @@
            https://themimitoof.fr/mettre-en-place-un-relais-tor/
            https://blog.torproject.org/lifecycle-new-relay
 
+### 2) VirtualHost avec Apache2
 
+Il s'agit simplement d'associer plusieurs noms DNS à une seule adresse IP.
+
+  * Dans un premier temps nous allons définir des noms DNS pour nos sites : monsite1.fr et monsite2.fr Il faut ajouter ces informations au fichier /etc/hosts pour que la résolution DNS pointe sur la machine locale (127.0.0.1) :
+    127.0.0.1 monsite1.fr
+    127.0.0.1 monsite2.fr
+
+  * Puis nous allons créer deux dossiers ,dans le dossier /var/www qui est par défaut la racine d'apache, via ces deux commandes :
+    sudo mkdir /var/www/monsite1
+    sudo mkdir /var/www/monsite2
+
+  * Nous allons créer les fichiers de configurations pour apache. Dans /etc/apache2/sites-available se trouve un fichier nommé default. Modifiez les lignes suivantes :
+
+    ServerName monsite1.fr
+    ServerAlias www.monsite1.fr
+    DocumentRoot /var/www/monsite1
+
+    <Directory /var/www/monsite1>
+
+  * enregistrez le fichier sous le nom monsite1.conf puis modifiez-le en mettant cette fois monsite2 à la place de monsite1, puis ré-enregistrez sous le nom de monsite2.conf.
+
+  * Pour terminer, il vous suffit de créer des liens des deux fichiers nouvellement créés dans le dossier /etc/apache2/sites-enabled. Pour ce faire, une commande a été faite spécialement :
+
+      sudo a2ensite monsite1.conf
+      sudo a2ensite monsite2.conf
+
+  * Puis, afin de recharger la configuration d'Apache :
+
+      sudo /etc/init.d/apache2 reload
 
 
 
@@ -199,6 +228,59 @@ De très nombreux relais Tor utilisent des versions de Tor anciennes qui ne sont
 réf : [1]
 
 
+## Comment bloquer Tor
+
+### Liste des IP TOR avec Proxy Squid
+
+Au démarrage Tor va vous demander si votre réseau est équipé d’un proxy. Si vous cochez non il va essayer de contacter des « IP Tor »  à travers la passerelle configurée sur votre ordinateur et va scanner tout les ports qui peuvent potentiellement sortir sur internet.
+
+La première sécurité est donc d’empêcher les clients de sortir sur directement sur internet et de mettre en place un proxy. Les clients ne pourront donc pas sortir sur internet sans passer par lui. Seul le proxy sera autorisé à sortir sur internet. Tor va donc scanner et ne jamais trouver de « porte de sortie ».
+
+Mais Tor (s’il est bien configuré) peut aussi passer par un proxy pour contacter directement des « IP Tor ». Son principe de fonctionnement est le suivant :
+Tor contacte une adresse IP par le proxy et ne ferme pas la connexion, il la laisse ouverte et fait transiter la navigation Tor sur ce « tunnel » ouvert.
+
+La solution est donc de bloquer les connexions vers les IP de Tor.
+Ce site https://www.dan.me.uk/torlist/ liste la plupart des adresses IP Tor disponibles sur le net si l'on veut établir une blacklist des IP.
+Le meilleur moyen resterait de constituer une whitelist pour n'autoriser qu'un lot fini d'adresses mais cela peut-être compliqué dans certains contextes.
+
+Exemple avec Squid :
+Pour contrôler tout ce qui passe par votre serveur proxy, vous pouvez utiliser ce que l'on appelle les ACL (Access Control List). Les ACL sont des règles que le serveur applique. Cela permet par exemple d'autoriser ou d'interdire certaines transactions.
+On peut autoriser ou interdire en fonction du domaine, du protocole, de l'adresse IP, du numéro de port, d'un mot, on peut aussi limiter sur des plages horaires.
+
+On récupère la liste des ip tor via ce lien : https://www.dan.me.uk/torlist/
+
+On les stock dans un fichier :
+
+   /etc/squid3/iptor
+
+On créer notre acl dans :
+
+  /etc/squid3/squid.conf:
+
+et on ajoute l'acl avec le http_acces qui va avec :
+
+   acl tor dst "/etc/squid3/torlist"
+   http_access deny tor
+
+### Apache2 et la commande deny
+
+Dans un premier temps, nous allons télécharger sur notre serveur la liste des adresses ip des noeuds. A partir de cette liste nous allons générer un fichier avec des deny sur chaque adresses IP. Cette liste est généré par le site www.dan.me.uk et peut être téléchargé toutes les 30 minutes.
+
+wget -q https://www.dan.me.uk/torlist/ -O - | sed 's/^/deny from /g' > /etc/apache/tor-ip.conf;
+
+Une fois la liste téléchargé, il faudra rajouter ces quelques lignes dans votre fichier de configuration du virtualhost :
+
+  Order allow,deny
+  Include /etc/apache2/tor-ip.conf
+  allow from all
+
+Il ne reste plus qu'à effectuer un reload du serveur apache :
+
+  /etc/init.d/apache2 reload
+
+Pour améliorer encore il faudrait faire un cron pour mettre à jour régulièrement la liste des IPs TOR.
+
+Définition cron : C'est un programme qui permet aux utilisateurs des systèmes Unix d’exécuter automatiquement des scripts, des commandes ou des logiciels à une date et une heure spécifiées à l’avance, ou selon un cycle défini à l’avance.
 
 Annexe 1 :
 ![Établissement des circuits](images/Etablissement_circuit.png "Établissement des circuits")
@@ -230,3 +312,5 @@ reference :
 <br/>[8] :https://donncha.is/2013/05/trawling-tor-hidden-services/
 <br/>[9] :https://framablog.org/2016/05/06/anonymat-en-ligne-nos-oignons/
 <br/>[10] : https://blog.torproject.org/lifecycle-new-relay
+<br/>[11] : https://blog.lesfourmisduweb.org/bloquer-le-reseau-tor/
+<br/>[12] : https://foxinou.fr/empecher-les-noeuds-du-reseau-tor-dacceder-a-votre-serveur-apache-2/
