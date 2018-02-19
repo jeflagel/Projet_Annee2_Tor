@@ -282,6 +282,41 @@ Pour améliorer encore il faudrait faire un cron pour mettre à jour régulière
 
 Définition cron : C'est un programme qui permet aux utilisateurs des systèmes Unix d’exécuter automatiquement des scripts, des commandes ou des logiciels à une date et une heure spécifiées à l’avance, ou selon un cycle défini à l’avance.
 
+## Détection Tor
+
+### Utilisation d'un IDS
+
+L'IDS est un mécanisme destiné à repérer des activités anormales ou suspectes sur la cible analysée (un réseau ou un hôte). Snort est un IDS open source avec une communauté importante qui garantit son bon fonctionnement et sa fiabilité. Il permet ,sur la base d'un ensemble de règles, de créer des alertes qui seront répertoriées dans un fichier de Logs. Il suffit de créer une règle spécifiques pour TOR et l'ajouter au fichier de conf de L'IDS. Snort possède une version améliorée : Snort Inline qui est un IPS. Ce dernier permet, en plus de détecter, d'effectuer des actions pour stopper des éventuelles actions malveillantes.
+Pour mettre en place un IDS Snort couplé à un dispositif d'alertes par mails le tutoriel suivant est très détaillé et facile de mise en place.
+http://jacquesgoueth.blogspot.fr/2017/07/comment-mettre-en-place-un-systeme-de.html
+
+### Les logs Windows
+Deuxième approche, si vous avez un moyen de collecte et de traitement des logs des vos machines, et que vous avez activé les logs qui trace les démarrage de processus : cherchez simplement toutes les lignes de journaux contenant « tor.exe ». Ca parait simple, mais vous allez attraper tous les utilisateurs qui ont installé tor sans se poser plus de question. Autre avantage, vous détecterez aussi les exécutables tor « portables » lancé depuis une clé USB. Cette technique est très efficace en contrôle de vos utilisateurs. Cependant, les malwares utilisant TOR en exfiltration de données ne laisserons pas trainer un fichier tor.exe bien en évidence.
+
+### Le Réseau
+
+TOR fait bien attention à utiliser un protocole HTTPS relativement standard pour ne pas attirer l'attention de tous les firewalls et IDS sur son chemin. On a quelques options tout de même :
+    - La liste des relais TOR permet de savoir si un couple IP/Port correspond a un routeur TOR. Et de plus, si les logs sont anciens le Tor garde une liste des relais dans le temps à cette adresse : https://exonerator.torproject.org/
+    Pour récupérer cette liste :
+        - sudo pip install OnionPy
+        - script python :
+            from onion_py.manager import Manager
+            from onion_py.caching import OnionSimpleCache
+            manager = Manager(OnionSimpleCache())
+            sd = manager.query('details')
+            len(sd.relays)
+            for relay in sd.relays:
+            for addr in relay.or_addresses:
+            print(addr)
+      il ne vous reste plus qu’a croiser cette liste IP:Port avec vos journaux de sondes, routeurs ou firewalls pour avoir des bonnes pistes des clients TOR chez vous.
+
+    -  Analyser le trafic : notamment via les certificats SSL généré par TOR qui présente un pattern particulier.
+
+### Conclusion
+
+Le meilleur moyen d'avoir des résultats est de croiser ces différentes techniques pour obtenir un maximum d'information et ainsi prendre les bonnes décision.
+
+
 Annexe 1 :
 ![Établissement des circuits](images/Etablissement_circuit.png "Établissement des circuits")
 Annexe 2 :
@@ -314,3 +349,4 @@ reference :
 <br/>[10] : https://blog.torproject.org/lifecycle-new-relay
 <br/>[11] : https://blog.lesfourmisduweb.org/bloquer-le-reseau-tor/
 <br/>[12] : https://foxinou.fr/empecher-les-noeuds-du-reseau-tor-dacceder-a-votre-serveur-apache-2/
+<br/>[12] :https://geekeries.org/2016/07/detecter-du-trafic-tor-sur-son-reseau/
