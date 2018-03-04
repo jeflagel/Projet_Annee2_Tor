@@ -230,3 +230,6 @@ reference :
 <br/>[8] :https://donncha.is/2013/05/trawling-tor-hidden-services/
 <br/>[9] :https://framablog.org/2016/05/06/anonymat-en-ligne-nos-oignons/
 <br/>[10] : https://blog.torproject.org/lifecycle-new-relay
+<br/>[11] : https://blog.lesfourmisduweb.org/bloquer-le-reseau-tor/
+<br/>[12] : https://foxinou.fr/empecher-les-noeuds-du-reseau-tor-dacceder-a-votre-serveur-apache-2/
+<br/>[12] :https://geekeries.org/2016/07/detecter-du-trafic-tor-sur-son-reseau/
