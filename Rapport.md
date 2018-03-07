@@ -34,11 +34,44 @@
   Un outil de conversion supportant un très grand nombre de formats.Dnas notre cas très utile car il supporte le format Markdown et contient de plus des éléments
 
 ### c) Vagrant
-  Permet de créer une machine virtuelle avec tous les paramètres souhaités de manière très rapide. Ainsi notre environnement de travail est très rapidement disponible.Possibilité de récupérer les boxs sur internet facilement en choisissant sa distribution (nous avons choisi debian 7.2).
-  On tape la commande :  vagrant init NomMachine LienBox
+  Permet de créer une machine virtuelle avec tous les paramètres souhaités de manière très rapide. Ainsi notre environnement de travail est très rapidement disponible.Possibilité de récupérer les boxs sur internet facilement en choisissant sa distribution.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------
+  Les différentes commandes sont les suivantes :
+
+  * Init
+  Command: vagrant init NomMachine LienBox
   Cela entraine la création d'un fichier vagrantfile
 
+  * Destroy
+  Command: vagrant destroy [name|id]
+  Cette commande arrête la machine Vagrant en cours d'exécution et détruit toutes les ressources créées lors du processus de création de la machine.
 
+  * Halt
+  Command: vagrant halt [name|id]
+  Cette commande arrête la machine Vagrant en cours d'exécution.
+
+  * Provision
+  Command: vagrant provision [vm-name]
+  Exécute tous les fournisseurs configurés sur la machine Vagrant en cours d'exécution.
+
+  * SSH
+  Command: vagrant ssh [name|id] [-- extra_ssh_args]
+  Cela va SSH dans une machine en cours d'exécution et vous donner accès à un shell.
+
+  * Up
+  Command: vagrant up [name|id]
+  Cette commande crée et configure les machines invitées en fonction de votre fichier Vagrantfile.
+
+
+### c) Ansible
+
+  Ansible est un logiciel libre qui permet le déploiement ou l’automatisation de tâches d’administrations vers plusieurs serveurs distant en même temps, quelque soit leur système d’exploitation. Ce qui est intéressent avec Ansible, pas besoin d’installer d’agent sur les serveurs, seul le déploiement de la clé public du serveur Ansible est nécessaire, car les connexions se font via ssh.
+  C'est un outil qui permet de déployer très rapidement des environnements de test par exemple.
+  Les Playbooks sont le langage de configuration, de déploiement et d'orchestration d'Ansible. Ils peuvent décrire une stratégie que vous souhaitez appliquer à vos systèmes distants ou un ensemble d'étapes dans un processus informatique général.
+  Nous avons à la demande de Mr Mazenod créés un playbook permettant l'installation de Tor et la création d'un hidden_service.
+
+-----------------------------------------------------------------------------------------------------------------------------------------------------
 
 
 ## 3) Administration web
@@ -56,7 +89,7 @@
   * Changer les clefs données par defaut
   Dans /var/lib/tor/hidden_service, modifier les fichiers hostname et private_key.
   Obtention de ces clefs avec scallions : https://github.com/lachesis/scallion/raw/binaries/scallion-v2.0.zip
-  Commande set list .
+  Commande set list pour vérifier que le fichier ne contient pas d'espaces en trop ou autres.
 
 
   * Telecharger apache
@@ -90,7 +123,7 @@
      https://themimitoof.fr/mettre-en-place-un-relais-tor/
      https://blog.torproject.org/lifecycle-new-relay
 
-### 2) VirtualHost avec Apache2
+### 3) VirtualHost avec Apache2
 
 Il s'agit simplement d'associer plusieurs noms DNS à une seule adresse IP.
 
@@ -121,8 +154,41 @@ Il s'agit simplement d'associer plusieurs noms DNS à une seule adresse IP.
 
       sudo /etc/init.d/apache2 reload
 
+--------------------------------------------------------------------------------------------------------------------------------------------------------------
 
+### 4) ISPCONFIG
 
+      - Pour installer ISPCONFIG :
+      	apt-get update && apt-get -y upgrade
+      	apt-get install -y unzip
+      	cd /tmp
+      	wget --no-check-certificate -O installer.tgz "https://github.com/servisys/ispconfig_setup/tarball/master"
+      	tar zxvf installer.tgz
+      	cd *ispconfig*
+      	bash install.sh
+
+      - On modifie le fichier /etc/hosts et le fichier /etc/hostname (ici jai mis le nom projet)
+
+      - Pour acceder a la page ISPCONFIG :
+      	https://projet:8080
+
+      - Vu que jai eu un pb jai fait :
+      	student@projet:~$  wget --no-check-certificate "https://projet:8080"
+      jai télécharger la page html de ispconfig depuis la machine
+
+      - Pour récupérer un fichier sur la machine :
+      	jeremy@jeremy:~$ scp student@193.55.95.207:~/index.html ./
+
+      - Ces deux commandes ont permis de vérifier que la page était bien accessible depuis la machine.
+
+      - Le problème vient du fait que le CRI filtre le port 8080 donc de l'extérieur nous ne pouvions pas accéder a la page de login de ISPCONFIG.
+      - Nous avons résolu le problème en faisant une redirection des requêtes "https://tor.isima.fr"qui arrivent sur le port 80 vers le port 8080.
+      Le port 80 n'est pas filtrer par le CRI donc la requête arrive et on la redirige en interne en activant le mode proxy:
+        - sudo a2enmod proxy_http
+        - sudo systemctl restart apache2
+
+      - Une fois la page ISPCONFIG accessible nous avons créer le deuxième site "tor2.isima.fr" avec comme ServeurAlias le hostname que l'on à généré pour le hidden_service et nous avons donc un service caché accessible sur le Tor avec une adresse en .onion dont les 5 première lettres sont isima .
+------------------------------------------------------------------------------------------------------------------------------------------------------------
 
 ## 3) Tor : The onion rooter
 ### 1) Pourquoi ?
