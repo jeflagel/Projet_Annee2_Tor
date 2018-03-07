@@ -1,1 +1,0 @@
-{"virtualbox":{"/var/www/JerLaur/":{"mount_options":["dmode=777","fmode=666","uid=1000","gid=1000"],"guestpath":"/var/www/JerLaur","hostpath":"/Users/Laurine/Documents/GitHub/Projet_Annee2_Tor","disabled":false,"__vagrantfile":true},"/vagrant":{"guestpath":"/vagrant","hostpath":"/Users/Laurine/Documents/GitHub/Projet_Annee2_Tor","disabled":false,"__vagrantfile":true}}}
