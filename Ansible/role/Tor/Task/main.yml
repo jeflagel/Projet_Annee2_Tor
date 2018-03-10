@@ -1,0 +1,36 @@
+- debug:
+    msg: "System {{ inventory_hostname }} comes from family {{ ansible_os_family }}"
+
+- name: configure apt sources and hostname
+  copy:
+    src: "{{ item }}"
+    dest: "/{{ item }}"
+  with_items:
+    - etc/apt/sources.list
+
+- name: update sources
+  apt: update_cache=yes
+  
+- name: add key
+  apt_key:
+    keyserver: keys.gnupg.net
+    id: A3C4F0F979CAA22CDBA8F512EE8CBC9E886DDD89
+    state: present
+
+- name: install tor deb
+  apt:
+   pkg: "{{ item }}"
+   state: latest
+  with_items: ["deb.torproject.org-keyring", "tor"]
+
+- name: configure apt sources and hostname
+  copy:
+    src: "{{ item }}"
+    dest: "/{{ item }}"
+  with_items:
+    - etc/tor/torrc
+
+- service: 
+   name: tor
+   state: reloaded
+
